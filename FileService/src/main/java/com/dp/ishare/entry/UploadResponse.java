@@ -1,24 +1,44 @@
 package com.dp.ishare.entry;
 
-public class UploadResponse {
-    private String fileName;
-    private String fileDownloadUri;
-    private String fileType;
-    private long size;
+import com.dp.ishare.constants.ResponseMsg;
 
-    public UploadResponse(String fileName, String fileDownloadUri, String fileType, long size) {
-        this.fileName = fileName;
+public class UploadResponse {
+    private Integer respCode;
+    private String respMsg;
+    private String fileDownloadUri;
+    private String extractCode;
+    private Long size;
+
+    public UploadResponse(ResponseMsg msg, String fileDownloadUri, String extractCode, Long size) {
+        this.respCode = msg.getCode();
+        this.respMsg = msg.getMsg();
         this.fileDownloadUri = fileDownloadUri;
-        this.fileType = fileType;
+        this.extractCode = extractCode;
         this.size = size;
     }
 
-    public String getFileName() {
-        return fileName;
+    public UploadResponse (ResponseMsg msg) {
+        this.respCode = msg.getCode();
+        this.respMsg = msg.getMsg();
+        this.fileDownloadUri = null;
+        this.extractCode = null;
+        this.size = null;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public Integer getRespCode() {
+        return respCode;
+    }
+
+    public void setRespCode(Integer respCode) {
+        this.respCode = respCode;
+    }
+
+    public String getRespMsg() {
+        return respMsg;
+    }
+
+    public void setRespMsg(String respMsg) {
+        this.respMsg = respMsg;
     }
 
     public String getFileDownloadUri() {
@@ -29,19 +49,19 @@ public class UploadResponse {
         this.fileDownloadUri = fileDownloadUri;
     }
 
-    public String getFileType() {
-        return fileType;
+    public String getExtractCode() {
+        return extractCode;
     }
 
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
+    public void setExtractCode(String extractCode) {
+        this.extractCode = extractCode;
     }
 
-    public long getSize() {
+    public Long getSize() {
         return size;
     }
 
-    public void setSize(long size) {
+    public void setSize(Long size) {
         this.size = size;
     }
 }

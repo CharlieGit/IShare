@@ -1,5 +1,6 @@
 package com.dp.ishare.controller;
 
+import com.dp.ishare.constants.ResponseMsg;
 import com.dp.ishare.entry.UploadResponse;
 import com.dp.ishare.service.FileService;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -30,7 +32,7 @@ public class FileController {
      * {
      *     "file":"***.jpg",
      *     "userId":"123test",
-     *     "effectiveDate":"1",
+     *     "effectiveDays":7,
      *     "needEncrypt":true
      * }
      *
@@ -49,15 +51,18 @@ public class FileController {
      * }
      */
     @PostMapping("/uploadFile")
-    public UploadResponse uploadFile(@RequestParam("file") MultipartFile file, String userId){
-        String fileName = fileService.storeFile(file, userId);
+    public UploadResponse uploadFile(MultipartFile file, String userId,
+                                     Integer effectiveDays, Boolean needEncrypt){
+        if (file == null || StringUtils.isEmpty(userId)) {
+            return new UploadResponse(ResponseMsg.MISSING_PARAMETER);
+        }
 
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/downloadFile/" + userId + "/")
-                .path(fileName)
-                .toUriString();
+        logger.info("file uploading, userId={}, fileName={}, fileSize={}", userId, file.getOriginalFilename(), file.getSize());
 
-        return new UploadResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
+        UploadResponse response = fileService.storeFile(file, userId, effectiveDays, needEncrypt);
+
+        logger.info("file upload done, fileDownloadUri={}", response.getFileDownloadUri());
+        return response;
     }
 
     /**
