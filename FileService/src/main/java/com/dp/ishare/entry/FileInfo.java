@@ -1,18 +1,43 @@
 package com.dp.ishare.entry;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Date;
-
+@Table("file_info")
 public class FileInfo {
+    @Id
+    @Column("fileId")
     private String fileId;
+
+    @Column("fileName")
     private String fileName;
+
+    @Column("fileType")
     private String fileType;
+
+    @Column("fileSize")
     private Long fileSize;
+
+    @Column("userId")
     private String userId;
+
+    @Column("uploadDate")
     private Date uploadDate;
+
+    @Column("expireDate")
     private Date expireDate;
+
+    @Column("encryptCode")
     private String encryptCode;
+
+    public FileInfo() {
+    }
 
     @PersistenceConstructor
     public FileInfo(String fileId, String fileName, String fileType, Long fileSize, String userId, Date uploadDate, Date expireDate, String encryptCode) {
