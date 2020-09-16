@@ -1,5 +1,7 @@
 package com.dp.ishare.service;
 
+import com.dp.ishare.dao.FileInfoDao;
+import com.dp.ishare.entry.FileInfo;
 import com.dp.ishare.exception.FileException;
 import com.dp.ishare.properties.FileProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +17,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Optional;
 
 @Service
 public class FileService {
 
     @Autowired
     private FileProperties fileProperties;
+
+    @Autowired
+    private FileInfoDao fileInfoDao;
 
     public String storeFile(MultipartFile file, String userId) {
         // Normalize file name
@@ -40,6 +46,10 @@ public class FileService {
             } catch (Exception e) {
 
             }
+
+            Optional<FileInfo> fileList = fileInfoDao.getById("aaabbb");
+//            fileList.forEach(info -> System.out.println("=======" + info.getFileName()));
+            System.out.println(fileList.get().getFileName());
 
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
