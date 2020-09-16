@@ -23,18 +23,52 @@ public class FileController {
     @Autowired
     private FileService fileService;
 
+    /**
+     * upload file API
+     *
+     * params:
+     * {
+     *     "file":"***.jpg",
+     *     "userId":"123test",
+     *     "effectiveDate":"1",
+     *     "needEncrypt":true
+     * }
+     *
+     * @param file
+     * @param userId
+     * @return
+     * success:
+     * {
+     *     "status":1,
+     *     "fileDownloadUri":"http://***//***.jpg",
+     *     "code":"1234"
+     * }
+     * error:
+     * {
+     *     "status":0
+     * }
+     */
     @PostMapping("/uploadFile")
     public UploadResponse uploadFile(@RequestParam("file") MultipartFile file, String userId){
         String fileName = fileService.storeFile(file, userId);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/downloadFile/" + userId)
+                .path("/downloadFile/" + userId + "/")
                 .path(fileName)
                 .toUriString();
 
         return new UploadResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
     }
 
+    /**
+     *
+     * @param fileName
+     * @param userId
+     * @param request
+     * @return
+     * case
+     * error: "file not found or expired"
+     */
     @GetMapping("/downloadFile/{userId}/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, @PathVariable String userId, HttpServletRequest request) {
         // Load file as Resource
@@ -54,7 +88,7 @@ public class FileController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
 }
