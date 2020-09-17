@@ -82,7 +82,7 @@ public class FileController {
         FileInfo fileInfo = fileService.getFileInfoById(fileId);
         if (fileInfo == null || fileInfo.getExpireDate().before(new Date())) {
             logger.info("the file not found or expired");
-            return null;
+            return "error.html";
         }
         session.setAttribute("fileId",fileInfo.getFileId());
         return "index.html";
@@ -93,8 +93,6 @@ public class FileController {
             @RequestParam("file") String fileId,
             @RequestParam("code") String code,
             HttpServletRequest request, HttpServletResponse response) throws IOException {
-        logger.info(fileId);
-        logger.info(code);
         FileInfo fileInfo = fileService.getFileInfoById(fileId);
         if (fileInfo == null || !fileInfo.getEncryptCode().equals(code)) {
             request.setAttribute("fileId", fileInfo.getFileId());
