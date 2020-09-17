@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>iShare</title>
+</head>
+<body>
+<button id="iShare-take-screenshots">Take Screenshots</button>
+<script>
+    const { ipcRenderer } = require('electron')
+
+    document.getElementById('iShare-take-screenshots').addEventListener('click', () => {
+        ipcRenderer.send('take-screenshots');
+    })
+</script>
+</body>
+</html>

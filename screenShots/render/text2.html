@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+      #canvas_zhumianban{
+            border:3px solid firebrick;
+        }
+      #div_zhanshi1{
+          width: 300px;
+          height: 300px;
+          border:1px solid black;
+          position: absolute;
+          left: 410px;
+          top: 0;
+      }
+      #div_zhanshi2{
+          width: 300px;
+          height: 300px;
+          border:1px solid indigo;
+          position: absolute;
+          top: 0;
+          left: 725px;
+      }
+      #div_zhanshi3{
+          width: 300px;
+          height: 300px;
+          border:1px solid darkblue;
+          position: absolute;
+          top: 0;
+          left: 1040px;
+      }
+      #div_zhanshi4{
+          width: 300px;
+          height: 300px;
+          border:1px solid gold;
+          position: absolute;
+          left: 410px;
+          top: 320px;
+      }
+      #div_zhanshi5{
+          width: 300px;
+          height: 300px;
+          border:1px solid darkred;
+          position: absolute;
+          top: 320px;
+          left: 725px;
+      }
+      #div_zhanshi6{
+          width: 300px;
+          height: 300px;
+          border:1px solid lightsalmon;
+          position: absolute;
+          top: 320px;
+          left: 1040px;
+      }
+    </style>
+
+</head>
+<body style="position:relative">
+<button id="img_hong">aaaa</button>
+<button id="img_lan"οnclick="bi('lan')"alt=""> bbb</button>
+<button id="img_lv"οnclick="bi('lv')"alt=""> ccc</button>
+<br/>
+<button id="img_xiao"οnclick="cuxi(3)"alt="">ddd</button>
+<button id="img_zhong"οnclick="cuxi(10)"alt="">eee</button>
+<button id="img_da"    οnclick="cuxi(25)"alt="">ffff</button>
+<br/>
+<canvas id="canvas_zhumianban"width="300"height="300"></canvas>
+<div id="div_zhanshi1"></div>
+<div id="div_zhanshi2"></div>
+<div id="div_zhanshi3"></div>
+<div id="div_zhanshi4"></div>
+<div id="div_zhanshi5"></div>
+<div id="div_zhanshi6"></div>
+<br/>
+<input type="button"value="save"οnclick="save()"/>
+<input type="button"value="clear"οnclick="clearCanvas()"/>
+<input type="button"value="clearall"οnclick="clearall()"/>
+
+<script>
+
+        //画笔的点击事件
+        function bi(e)
+        {
+        console.log(1111111);
+            var img_hong=document.getElementById("img_hong");
+            var img_lan=document.getElementById("img_lan");
+            var img_lv=document.getElementById("img_lv");
+            if(e=="hong"){
+                img_lan.style.backgroundColor="white";
+                img_lv.style.backgroundColor="white";
+                img_hong.style.backgroundColor="red";
+                huabiAction('red');
+            }
+            if(e=="lan"){
+                huabiAction('blue');
+                img_lv.style.backgroundColor="white";
+                img_hong.style.backgroundColor="white";
+                img_lan.style.backgroundColor="blue";
+            }
+            if(e=="lv"){
+                huabiAction('green');
+                img_hong.style.backgroundColor="white";
+                img_lan.style.backgroundColor="white";
+                img_lv.style.backgroundColor="green";
+            }
+        }
+
+        function huabiAction(color){
+            var canvas=document.getElementById("canvas_zhumianban");
+            var cxt=canvas.getContext("2d");
+            cxt.strokeStyle=""+color+"";
+            cxt.beginPath();
+            cuxi();
+            canvas.οnmοusedοwn=function(e){
+              cxt.moveTo(e.clientX-canvas.offsetLeft,e.clientY-canvas.offsetTop);
+               document.onmousemove=function(e) {
+                    cxt.lineTo(e.clientX- canvas.offsetLeft, e.clientY- canvas.offsetTop);
+                    cxt.stroke();
+                   document.onmouseup=function(e){
+                       document.onmousedown=null;
+                       document.onmousemove=null;
+                    };
+                };
+           };
+        }
+        //获取画笔粗细
+        function cuxi(e){
+            var canvas=document.getElementById("canvas_zhumianban");
+            var cxt=canvas.getContext("2d");
+            cxt.lineWidth=e;
+            var img_xiao=document.getElementById("img_xiao");
+            var img_zhong=document.getElementById("img_zhong");
+            var img_da=document.getElementById("img_da");
+            if(e==3){
+                cxt.beginPath();
+                img_da.style.background="white";
+                img_zhong.style.background="white";
+                img_xiao.style.background="black";
+            }
+            if(e==10){
+                cxt.beginPath();
+                img_da.style.background="white";
+                img_zhong.style.background="black";
+                img_xiao.style.background="white";
+            }
+            if(e==25){
+                cxt.beginPath();
+                img_da.style.background="black";
+                img_zhong.style.background="white";
+                img_xiao.style.background="white";
+            }
+            return cxt.lineWidth;
+        }
+        function clearCanvas()
+        {
+            var c=document.getElementById("canvas_zhumianban");
+            var cxt=c.getContext("2d");
+            cxt.clearRect(0,0,c.width,c.height);
+        }
+        var i=1;
+        function save(){
+            if(i>6){
+                return;
+            }
+            var c=document.getElementById("canvas_zhumianban");
+            var image= new Image();
+            image.src= c.toDataURL("image/png");
+            var div1=document.getElementById("div_zhanshi"+i+"");
+            div1.appendChild(image);
+            i++;
+        }
+        function clearall(){
+            for(varj=1;j<=6;j++){
+                var div11=document.getElementById("div_zhanshi"+j+"");
+                var image=div11.firstElementChild;
+                div11.removeChild(image);
+                i=1;
+            }
+        }
+
+        document.getElementById('img_hong').addEventListener('click', () => {
+        console.log(5555);
+    })
+
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="canvas" width="300" height="150" style="border: 1px solid #d3d3d3;"></canvas>
+
+<script>
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+
+    canvas.width = 800;
+    canvas.height = 600;
+
+    var background = new Image();
+    background.src = "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=3892521478,1695688217&fm=26&gp=0.jpg"
+    background.onload = () => {
+        ctx.drawImage(background, 0, 0);
+    }
+
+</script>
+
+</body>
+</html>
