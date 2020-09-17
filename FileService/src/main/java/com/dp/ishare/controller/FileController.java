@@ -100,7 +100,7 @@ public class FileController {
         }
 
         // Load file as Resource
-        Resource resource = fileService.loadFileAsResource(fileInfo.getFileName(), fileInfo.getUserId());
+        Resource resource = fileService.loadFileAsResource(fileInfo.getFileId() + "." + fileInfo.getFileType(), fileInfo.getUserId());
         // Try to determine file's content type
         String contentType = null;
         try {
