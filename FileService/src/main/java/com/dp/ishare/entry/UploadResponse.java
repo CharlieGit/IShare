@@ -1,24 +1,18 @@
 package com.dp.ishare.entry;
 
+import com.dp.ishare.constants.ResponseMsg;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 public class UploadResponse {
-    private String fileName;
     private String fileDownloadUri;
-    private String fileType;
-    private long size;
+    private String extractCode;
+    private Long size;
 
-    public UploadResponse(String fileName, String fileDownloadUri, String fileType, long size) {
-        this.fileName = fileName;
+    public UploadResponse(String fileDownloadUri, String extractCode, Long size) {
         this.fileDownloadUri = fileDownloadUri;
-        this.fileType = fileType;
+        this.extractCode = extractCode;
         this.size = size;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 
     public String getFileDownloadUri() {
@@ -29,19 +23,28 @@ public class UploadResponse {
         this.fileDownloadUri = fileDownloadUri;
     }
 
-    public String getFileType() {
-        return fileType;
+    public String getExtractCode() {
+        return extractCode;
     }
 
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
+    public void setExtractCode(String extractCode) {
+        this.extractCode = extractCode;
     }
 
-    public long getSize() {
+    public Long getSize() {
         return size;
     }
 
-    public void setSize(long size) {
+    public void setSize(Long size) {
         this.size = size;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "fileDownloadUri='" + fileDownloadUri + '\'' +
+                ", extractCode='" + extractCode + '\'' +
+                ", size=" + size +
+                '}';
     }
 }

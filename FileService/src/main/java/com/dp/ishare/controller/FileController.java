@@ -1,8 +1,12 @@
 package com.dp.ishare.controller;
 
+import com.dp.ishare.constants.ResponseMsg;
+import com.dp.ishare.entry.ApiResult;
+import com.dp.ishare.entry.ResponseBuilder;
 import com.dp.ishare.entry.FileInfo;
 import com.dp.ishare.entry.UploadResponse;
 import com.dp.ishare.service.FileService;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,17 +16,21 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Date;
 
+@Api(value = "file upload and download")
 @Controller
 public class FileController {
     private static final Logger logger = LoggerFactory.getLogger(FileController.class);
@@ -32,40 +40,30 @@ public class FileController {
 
     /**
      * upload file API
-     *
-     * params:
-     * {
-     *     "file":"***.jpg",
-     *     "userId":"123test",
-     *     "effectiveDate":"1",
-     *     "needEncrypt":true
-     * }
-     *
-     * @param file
-     * @param userId
-     * @return
-     * success:
-     * {
-     *     "status":1,
-     *     "fileDownloadUri":"http://***//***.jpg",
-     *     "code":"1234"
-     * }
-     * error:
-     * {
-     *     "status":0
-     * }
      */
+    @ApiOperation(value = "uploadFile",notes = "upload file to server")
+    @ApiImplicitParams({
+        @ApiImplicitParam(paramType = "query",name = "userId",value = "mayun666",required = true),
+        @ApiImplicitParam(paramType = "query",name = "effectiveDays",value = "7",defaultValue = "9999"),
+        @ApiImplicitParam(paramType = "query",name = "needEncrypt",value = "true|false",defaultValue = "false")
+    })
+    @ApiResponses({
+        @ApiResponse(code = 500,message = "unknown error",response = UploadResponse.class)
+    })
     @PostMapping("/uploadFile")
     @ResponseBody
-    public UploadResponse uploadFile(@RequestParam("file") MultipartFile file, String userId){
-        String fileName = fileService.storeFile(file, userId);
+    public ApiResult<UploadResponse> uploadFile(@ApiParam(value="choose file", required = true) MultipartFile file, String userId,
+                                     Integer effectiveDays, Boolean needEncrypt){
+        if (file == null || StringUtils.isEmpty(userId)) {
+            return ResponseBuilder.fail(ResponseMsg.MISSING_PARAMETER);
+        }
 
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/downloadFile/" + userId + "/")
-                .path(fileName)
-                .toUriString();
+        logger.info("file uploading, userId={}, fileName={}, fileSize={}", userId, file.getOriginalFilename(), file.getSize());
 
-        return new UploadResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
+        ApiResult<UploadResponse> response = fileService.storeFile(file, userId, effectiveDays, needEncrypt);
+
+        logger.info("file upload done, {}", response.toString());
+        return response;
     }
 
 
@@ -142,4 +140,5 @@ public class FileController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
+
 }

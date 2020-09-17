@@ -1,23 +1,30 @@
 package com.dp.ishare.service;
 
+import com.dp.ishare.constants.CommonConstants;
+import com.dp.ishare.constants.ResponseMsg;
 import com.dp.ishare.dao.FileInfoDao;
+import com.dp.ishare.entry.ApiResult;
 import com.dp.ishare.entry.FileInfo;
+import com.dp.ishare.entry.ResponseBuilder;
+import com.dp.ishare.entry.UploadResponse;
 import com.dp.ishare.exception.FileException;
 import com.dp.ishare.properties.FileProperties;
+import com.dp.ishare.util.FileUtil;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Optional;
+import java.util.Date;
 
 @Service
 public class FileService {
@@ -28,29 +35,56 @@ public class FileService {
     @Autowired
     private FileInfoDao fileInfoDao;
 
-    public String storeFile(MultipartFile file, String userId) {
+    public ApiResult<UploadResponse> storeFile(MultipartFile file, String userId, Integer effectiveDays, Boolean needEncrypt) {
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
         try {
-            // Check if the file's name contains invalid characters
-            if(fileName.contains("..")) {
-                throw new FileException("Sorry! Filename contains invalid path sequence " + fileName);
+            // validate file size
+            if (file.getSize() > fileProperties.getMaxSize() * 1024 * 1024) {
+                return ResponseBuilder.fail(ResponseMsg.FILE_SIZE_LIMIT);
             }
 
             // Copy file to the target location (Replacing existing file with the same name)
+            String fileId = FileUtil.getFileId(file, userId);
+            if (StringUtils.isEmpty(fileId)) {
+                return ResponseBuilder.fail(ResponseMsg.COMMON_ERROR);
+            }
+            int dotIndex = fileName.lastIndexOf(CommonConstants.DOT);
+            String name = dotIndex == -1 ? fileName : fileName.substring(0, dotIndex);
+            String type = dotIndex == -1 ? "" : fileName.substring(dotIndex + 1);
             String directory = fileProperties.getUploadDir() + userId;
-            Path targetLocation = Paths.get(directory).toAbsolutePath().normalize().resolve(fileName);;
-            try{
+            Path targetLocation = Paths.get(directory).toAbsolutePath().normalize().resolve(fileId + CommonConstants.DOT + type);
+            if (!Files.exists(targetLocation)) {
                 Files.createDirectories(targetLocation);
-            } catch (Exception e) {
-
             }
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-            return fileName;
-        } catch (IOException ex) {
-            throw new FileException("Could not store file " + fileName + ". Please try again!", ex);
+            // insert DB
+            FileInfo info = new FileInfo();
+            info.setFileId(fileId);
+            info.setFileName(name);
+            info.setFileType(type);
+            info.setFileSize(file.getSize());
+            info.setUserId(userId);
+            info.setEncryptCode(BooleanUtils.isTrue(needEncrypt) ? FileUtil.generateExtractCode() : null);
+            info.setUploadDate(new Date());
+            info.setExpireDate(FileUtil.getExpireDate(effectiveDays));
+            if (fileInfoDao.existsById(fileId)) {
+                fileInfoDao.save(info);
+            } else {
+                fileInfoDao.insert(fileId, name, type, file.getSize(), userId, new Date(), info.getExpireDate(), info.getEncryptCode());
+            }
+
+            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/downloadFile/")
+                    .path(fileId)
+                    .toUriString();
+            UploadResponse response = new UploadResponse(fileDownloadUri, info.getEncryptCode(), file.getSize());
+            return ResponseBuilder.success(response, ResponseMsg.SUCCESS);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseBuilder.fail(ResponseMsg.COMMON_ERROR);
         }
     }
 
