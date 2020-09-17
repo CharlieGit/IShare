@@ -110,4 +110,8 @@ public class FileService {
         }
     }
 
+    public FileInfo getFileInfoById(String fileId){
+        return fileInfoDao.getById(fileId).orElse(null);
+    }
+
 }
