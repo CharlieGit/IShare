@@ -32,28 +32,6 @@ public class FileController {
 
     /**
      * upload file API
-     *
-     * params:
-     * {
-     *     "file":"***.jpg",
-     *     "userId":"123test",
-     *     "effectiveDays":7,
-     *     "needEncrypt":true
-     * }
-     *
-     * @param file
-     * @param userId
-     * @return
-     * success:
-     * {
-     *     "status":1,
-     *     "fileDownloadUri":"http://***//***.jpg",
-     *     "code":"1234"
-     * }
-     * error:
-     * {
-     *     "status":0
-     * }
      */
     @ApiOperation(value = "uploadFile",notes = "upload file to server")
     @ApiImplicitParams({
