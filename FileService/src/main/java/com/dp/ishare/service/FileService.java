@@ -77,7 +77,7 @@ public class FileService {
             }
 
             String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/downloadFile/")
+                    .path("/ishare/down/")
                     .path(fileId)
                     .toUriString();
             UploadResponse response = new UploadResponse(fileDownloadUri, info.getEncryptCode(), file.getSize());
