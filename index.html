@@ -10,7 +10,7 @@
             height:100%;
             border-radius:50%;
             position:absolute;
-            -webkit-app-region: drag
+            cursor: pointer;
         }
         #iShare-take-screenshots {
             width: 55px;
@@ -21,6 +21,22 @@
             margin: 15px;
             padding-left: 9px;
             padding-top: 9px;
+            cursor: pointer;
+        }
+
+        .svg-icon {
+            width: 34px;
+            height: 34px;
+            padding-left: 5px;
+            padding-top: 5px;
+            cursor: pointer;
+        }
+        .svg-icon:hover {
+            width: 44px;
+            height: 44px;
+            padding-left: 0;
+            padding-top: 0;
+            cursor: pointer;
         }
 
     </style>
@@ -28,7 +44,7 @@
 <body id="main-body">
 <!--<button id="iShare-take-screenshots">Take Screenshots</button>-->
 <div id="iShare-take-screenshots">
-    <svg viewBox="64 64 896 896" focusable="false" class="" data-icon="camera" width="44px" height="44px" fill="white" aria-hidden="true"><path d="M864 248H728l-32.4-90.8a32.07 32.07 0 00-30.2-21.2H358.6c-13.5 0-25.6 8.5-30.1 21.2L296 248H160c-44.2 0-80 35.8-80 80v456c0 44.2 35.8 80 80 80h704c44.2 0 80-35.8 80-80V328c0-44.2-35.8-80-80-80zm8 536c0 4.4-3.6 8-8 8H160c-4.4 0-8-3.6-8-8V328c0-4.4 3.6-8 8-8h186.7l17.1-47.8 22.9-64.2h250.5l22.9 64.2 17.1 47.8H864c4.4 0 8 3.6 8 8v456zM512 384c-88.4 0-160 71.6-160 160s71.6 160 160 160 160-71.6 160-160-71.6-160-160-160zm0 256c-53 0-96-43-96-96s43-96 96-96 96 43 96 96-43 96-96 96z"></path></svg>
+    <svg viewBox="64 64 896 896" focusable="false" class="svg-icon" data-icon="camera" fill="white" aria-hidden="true"><path d="M864 248H728l-32.4-90.8a32.07 32.07 0 00-30.2-21.2H358.6c-13.5 0-25.6 8.5-30.1 21.2L296 248H160c-44.2 0-80 35.8-80 80v456c0 44.2 35.8 80 80 80h704c44.2 0 80-35.8 80-80V328c0-44.2-35.8-80-80-80zm8 536c0 4.4-3.6 8-8 8H160c-4.4 0-8-3.6-8-8V328c0-4.4 3.6-8 8-8h186.7l17.1-47.8 22.9-64.2h250.5l22.9 64.2 17.1 47.8H864c4.4 0 8 3.6 8 8v456zM512 384c-88.4 0-160 71.6-160 160s71.6 160 160 160 160-71.6 160-160-71.6-160-160-160zm0 256c-53 0-96-43-96-96s43-96 96-96 96 43 96 96-43 96-96 96z"></path></svg>
 </div>
 <script>
     const { ipcRenderer } = require('electron')
@@ -36,6 +52,30 @@
     document.getElementById('iShare-take-screenshots').addEventListener('dblclick', () => {
         ipcRenderer.send('take-screenshots');
     })
+
+    let dragging = false;
+    let mouseX = 0;
+    let mouseY = 0;
+    document.getElementById('iShare-take-screenshots').addEventListener('mousedown', (e) => {
+        dragging = true;
+        const { pageX, pageY } = e;
+        mouseX = pageX;
+        mouseY = pageY;
+    });
+    window.addEventListener('mouseup', () => {
+        dragging = false;
+    });
+    window.addEventListener('mousemove', (e) => {
+        if (dragging) {
+            const { pageX, pageY } = e;
+            const win = require('electron').remote.getCurrentWindow();
+            const pos = win.getPosition();
+            pos[0] = pos[0] + pageX - mouseX;
+            pos[1] = pos[1] + pageY - mouseY;
+            win.setPosition(pos[0], pos[1]);
+        }
+    });
+
 </script>
 </body>
 </html>

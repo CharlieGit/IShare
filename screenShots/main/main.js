@@ -70,7 +70,7 @@ const captureScreen = (e, args) => {
       captureWin.blur();
     }
 
-    // captureWin.openDevTools()
+//     captureWin.openDevTools()
 
     captureWin.on("closed", () => {
       let index = captureWins.indexOf(captureWin);

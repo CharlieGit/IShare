@@ -1,4 +1,4 @@
-const { ipcRenderer, remote } = require('electron');
+const { ipcRenderer, remote, clipboard, nativeImage } = require('electron');
 const fs = require("fs");
 const path = require("path");
 
@@ -50,6 +50,11 @@ var ctx = canvas.getContext('2d');
          );
         })
 
+        document.getElementById('copy-button').addEventListener('click', () => {
+            var dataURL = canvas.toDataURL();
+            clipboard.writeImage(nativeImage.createFromDataURL(dataURL))
+            window.close();
+        });
 
 
 //    canvas.width = 800;
