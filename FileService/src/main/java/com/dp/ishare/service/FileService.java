@@ -3,13 +3,14 @@ package com.dp.ishare.service;
 import com.dp.ishare.constants.CommonConstants;
 import com.dp.ishare.constants.ResponseMsg;
 import com.dp.ishare.dao.FileInfoDao;
+import com.dp.ishare.entry.ApiResult;
 import com.dp.ishare.entry.FileInfo;
+import com.dp.ishare.entry.ResponseBuilder;
 import com.dp.ishare.entry.UploadResponse;
 import com.dp.ishare.exception.FileException;
 import com.dp.ishare.properties.FileProperties;
 import com.dp.ishare.util.FileUtil;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -18,14 +19,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Date;
-import java.util.Optional;
 
 @Service
 public class FileService {
@@ -36,20 +35,20 @@ public class FileService {
     @Autowired
     private FileInfoDao fileInfoDao;
 
-    public UploadResponse storeFile(MultipartFile file, String userId, Integer effectiveDays, Boolean needEncrypt) {
+    public ApiResult<UploadResponse> storeFile(MultipartFile file, String userId, Integer effectiveDays, Boolean needEncrypt) {
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
         try {
             // validate file size
             if (file.getSize() > fileProperties.getMaxSize() * 1024 * 1024) {
-                return new UploadResponse(ResponseMsg.FILE_SIZE_LIMIT);
+                return ResponseBuilder.fail(ResponseMsg.FILE_SIZE_LIMIT);
             }
 
             // Copy file to the target location (Replacing existing file with the same name)
             String fileId = FileUtil.getFileId(file, userId);
             if (StringUtils.isEmpty(fileId)) {
-                return new UploadResponse(ResponseMsg.COMMON_ERROR);
+                return ResponseBuilder.fail(ResponseMsg.COMMON_ERROR);
             }
             int dotIndex = fileName.lastIndexOf(CommonConstants.DOT);
             String name = dotIndex == -1 ? fileName : fileName.substring(0, dotIndex);
@@ -81,11 +80,11 @@ public class FileService {
                     .path("/downloadFile/")
                     .path(fileId)
                     .toUriString();
-
-            return new UploadResponse(ResponseMsg.SUCCESS, fileDownloadUri, info.getEncryptCode(), file.getSize());
+            UploadResponse response = new UploadResponse(fileDownloadUri, info.getEncryptCode(), file.getSize());
+            return ResponseBuilder.success(response, ResponseMsg.SUCCESS);
         } catch (Exception ex) {
             ex.printStackTrace();
-            return new UploadResponse(ResponseMsg.COMMON_ERROR);
+            return ResponseBuilder.fail(ResponseMsg.COMMON_ERROR);
         }
     }
 

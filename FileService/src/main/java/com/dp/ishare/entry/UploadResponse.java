@@ -1,44 +1,18 @@
 package com.dp.ishare.entry;
 
 import com.dp.ishare.constants.ResponseMsg;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 public class UploadResponse {
-    private Integer respCode;
-    private String respMsg;
     private String fileDownloadUri;
     private String extractCode;
     private Long size;
 
-    public UploadResponse(ResponseMsg msg, String fileDownloadUri, String extractCode, Long size) {
-        this.respCode = msg.getCode();
-        this.respMsg = msg.getMsg();
+    public UploadResponse(String fileDownloadUri, String extractCode, Long size) {
         this.fileDownloadUri = fileDownloadUri;
         this.extractCode = extractCode;
         this.size = size;
-    }
-
-    public UploadResponse (ResponseMsg msg) {
-        this.respCode = msg.getCode();
-        this.respMsg = msg.getMsg();
-        this.fileDownloadUri = null;
-        this.extractCode = null;
-        this.size = null;
-    }
-
-    public Integer getRespCode() {
-        return respCode;
-    }
-
-    public void setRespCode(Integer respCode) {
-        this.respCode = respCode;
-    }
-
-    public String getRespMsg() {
-        return respMsg;
-    }
-
-    public void setRespMsg(String respMsg) {
-        this.respMsg = respMsg;
     }
 
     public String getFileDownloadUri() {
@@ -63,5 +37,14 @@ public class UploadResponse {
 
     public void setSize(Long size) {
         this.size = size;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "fileDownloadUri='" + fileDownloadUri + '\'' +
+                ", extractCode='" + extractCode + '\'' +
+                ", size=" + size +
+                '}';
     }
 }
