@@ -45,6 +45,7 @@ const captureScreen = (e, args) => {
       // autoHideMenuBar: true,
       movable: false,
       resizable: false,
+      skipTaskbar: true,
       enableLargerThanScreen: true,
       hasShadow: false,
       webPreferences: {
@@ -118,6 +119,7 @@ const { width, height } = screen.getPrimaryDisplay().workAreaSize
         const win = new BrowserWindow({
             width: width - 300,
             height: height - 150,
+            skipTaskbar: true,
             webPreferences: {
               nodeIntegration: true,
             },
