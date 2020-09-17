@@ -8,13 +8,15 @@ public class User {
     private Date lastLogin;
     private String sendFileName;
     private String sendFileUrl;
+    private String sendFileSize;
 
-    public User(String userId, String remoteAddress, Date lastLogin, String sendFileName, String sendFileUrl) {
+    public User(String userId, String remoteAddress, Date lastLogin, String sendFileName, String sendFileUrl, String sendFileSize) {
         this.userId = userId;
         this.remoteAddress = remoteAddress;
         this.lastLogin = lastLogin;
         this.sendFileName = sendFileName;
         this.sendFileUrl = sendFileUrl;
+        this.sendFileSize = sendFileSize;
     }
 
     public String getUserId() {
@@ -55,5 +57,13 @@ public class User {
 
     public void setSendFileUrl(String sendFileUrl) {
         this.sendFileUrl = sendFileUrl;
+    }
+
+    public String getSendFileSize() {
+        return sendFileSize;
+    }
+
+    public void setSendFileSize(String sendFileSize) {
+        this.sendFileSize = sendFileSize;
     }
 }
