@@ -107,8 +107,8 @@ const initScreenshots = () => {
         win.webContents.send("take-screenshots", { type: "select", screenId })
       );
     } else if (type === "cancel") {
-        console.log(222);
-        console.log(url);
+//        console.log(222);
+//        console.log(url);
     } else if (type === 'console') {
         console.log(path);
     } else if (type === 'showImage') {
@@ -121,9 +121,9 @@ const { width, height } = screen.getPrimaryDisplay().workAreaSize
             },
           });
 
-           console.log(111);
-           console.log(url);
-           console.log(111);
+//           console.log(111);
+//           console.log(url);
+//           console.log(111);
            const path = require("path");
            ipcMain.once('get-image-url', (event) => {
                 event.returnValue = url;
