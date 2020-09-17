@@ -32,10 +32,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Date;
 
 @Api(value = "file upload and download")
 @Controller
+@RequestMapping("/ishare")
 public class FileController {
     private static final Logger logger = LoggerFactory.getLogger(FileController.class);
 
@@ -73,16 +76,11 @@ public class FileController {
 
 
     /**
-     *
-     * @param fileName
-     * @param userId
-     * @param request
-     * @return
-     * case
-     * error: "file not found or expired"
+     * download file
      */
-    @RequestMapping("/downloadFile/{fileId}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String fileId, String code, HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+    @ApiOperation(value = "down",notes = "download file")
+    @RequestMapping("/down/{fileId}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileId, String code, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws UnsupportedEncodingException {
         response.addHeader("Cache-control", "no-store");
         session.removeAttribute("fileId");
         FileInfo fileInfo = fileService.getFileInfoById(fileId);
@@ -117,40 +115,8 @@ public class FileController {
         String downloadName = FileUtil.getFileName(fileInfo.getFileName(), fileInfo.getFileType());
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + downloadName + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + URLEncoder.encode(downloadName, "UTF-8") + "\"")
                 .body(resource);
     }
 
-    @PostMapping("/downloadFile")
-    public ResponseEntity<Resource> downloadFileWithCode(
-            @RequestParam("file") String fileId,
-            @RequestParam("code") String code,
-            HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        FileInfo fileInfo = fileService.getFileInfoById(fileId);
-        if (fileInfo == null || !fileInfo.getEncryptCode().equals(code)) {
-            request.setAttribute("fileId", fileInfo.getFileId());
-//            response.sendRedirect("index.html");
-            request.getRequestDispatcher("error.html").forward(request, response);
-        }
-
-        // Load file as Resource
-        String serverFileName = FileUtil.getFileName(fileId, fileInfo.getFileType());
-        Resource resource = fileService.loadFileAsResource(serverFileName, fileInfo.getUserId());
-        // Try to determine file's content type
-        String contentType = null;
-        try {
-            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-        } catch (IOException ex) {
-            logger.info("Could not determine file type.");
-        }
-        if(contentType == null) {
-            contentType = "application/octet-stream";
-        }
-
-        String downloadName = FileUtil.getFileName(fileInfo.getFileName(), fileInfo.getFileType());
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + downloadName + "\"")
-                .body(resource);
-    }
 }
