@@ -1,11 +1,13 @@
 package com.dp.ishare.controller;
 
+import com.dp.ishare.constants.CommonConstants;
 import com.dp.ishare.constants.ResponseMsg;
 import com.dp.ishare.entry.ApiResult;
 import com.dp.ishare.entry.ResponseBuilder;
 import com.dp.ishare.entry.FileInfo;
 import com.dp.ishare.entry.UploadResponse;
 import com.dp.ishare.service.FileService;
+import com.dp.ishare.util.FileUtil;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +102,8 @@ public class FileController {
         }
 
         // Load file as Resource
-        Resource resource = fileService.loadFileAsResource(fileInfo.getFileId() + "." + fileInfo.getFileType(), fileInfo.getUserId());
+        String serverFileName = FileUtil.getFileName(fileId, fileInfo.getFileType());
+        Resource resource = fileService.loadFileAsResource(serverFileName, fileInfo.getUserId());
         // Try to determine file's content type
         String contentType = null;
         try {
@@ -112,9 +115,10 @@ public class FileController {
             contentType = "application/octet-stream";
         }
 
+        String downloadName = FileUtil.getFileName(fileInfo.getFileName(), fileInfo.getFileType());
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + downloadName + "\"")
                 .body(resource);
     }
 

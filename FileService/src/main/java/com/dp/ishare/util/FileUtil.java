@@ -62,4 +62,8 @@ public class FileUtil {
         return DateUtils.addDays(now, effectiveDays);
     }
 
+    public static String getFileName(String prefix, String suffix) {
+        return StringUtils.isEmpty(suffix) ? prefix : prefix + CommonConstants.DOT + suffix;
+    }
+
 }
