@@ -46,11 +46,6 @@ public class FileService {
             } catch (Exception e) {
 
             }
-
-            Optional<FileInfo> fileList = fileInfoDao.getById("aaabbb");
-//            fileList.forEach(info -> System.out.println("=======" + info.getFileName()));
-            System.out.println(fileList.get().getFileName());
-
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
             return fileName;
@@ -79,6 +74,10 @@ public class FileService {
         } catch (MalformedURLException ex) {
             throw new FileException("File not found " + fileName, ex);
         }
+    }
+
+    public FileInfo getFileInfoById(String fileId){
+        return fileInfoDao.getById(fileId).orElse(null);
     }
 
 }
