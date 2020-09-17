@@ -60,7 +60,8 @@ public class FileController {
     @PostMapping("/uploadFile")
     @ResponseBody
     public ApiResult<UploadResponse> uploadFile(@ApiParam(value="choose file", required = true) MultipartFile file, String userId,
-                                     Integer effectiveDays, Boolean needEncrypt){
+                                     Integer effectiveDays, Boolean needEncrypt, HttpServletRequest request){
+        long start = System.currentTimeMillis();
         if (file == null || StringUtils.isEmpty(userId)) {
             return ResponseBuilder.fail(ResponseMsg.MISSING_PARAMETER);
         }
@@ -69,7 +70,8 @@ public class FileController {
 
         ApiResult<UploadResponse> response = fileService.storeFile(file, userId, effectiveDays, needEncrypt);
 
-        logger.info("file upload done, {}", response.toString());
+        long end = System.currentTimeMillis();
+        logger.info("file upload done, took {}ms, {}", end - start, response.toString());
         return response;
     }
 
@@ -91,7 +93,7 @@ public class FileController {
 
         if (!StringUtils.isEmpty(fileInfo.getEncryptCode()) && StringUtils.isEmpty(code)) {
             session.setAttribute("fileId",fileInfo.getFileId());
-            throw new FileException("coed is empty", "index.html");
+            throw new FileException("code is empty", "index.html");
         }
 
         if (!StringUtils.isEmpty(fileInfo.getEncryptCode()) && !fileInfo.getEncryptCode().equalsIgnoreCase(code)) {

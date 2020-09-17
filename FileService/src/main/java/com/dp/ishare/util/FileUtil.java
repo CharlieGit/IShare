@@ -24,10 +24,8 @@ public class FileUtil {
     public static String getFileId(MultipartFile file, String userId) {
         try {
             byte[] fileBytes = file.getBytes();
-            System.out.println(fileBytes.length);
             String hex = DigestUtils.md5DigestAsHex(fileBytes);
             hex = DigestUtils.md5DigestAsHex((hex + userId).getBytes());
-            System.out.println(hex);
 
             StringBuilder outChars = new StringBuilder();
             String subHex = hex.substring(16, 24);
