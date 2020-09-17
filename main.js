@@ -1,7 +1,9 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, clipboard } = require("electron");
 const { initScreenshots } = require("./screenShots/main/main");
-const path = require("path");
-
+const spawn = require('child_process');
+const ip = require('ip');
+const IPAddress = ip.address();
+const config = require('./constants');
 let win;
 
 function createWindow() {
@@ -28,8 +30,14 @@ function createWindow() {
   win.on("closed", () => {
     win = null;
   });
-}
 
+  clipboard.writeText(`http://${IPAddress}:${config.port}/ishare/screenShot.png`, 'selection')
+  spawn.exec('node ./server.js', (err, stdout, stderr) => {
+      if(err) {
+        console.log('spawn error', err);
+      }
+  });
+}
 app.on("ready", createWindow);
 
 app.on("window-all-closed", () => {
@@ -43,3 +51,4 @@ app.on("activate", () => {
     createWindow();
   }
 });
+

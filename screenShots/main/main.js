@@ -1,8 +1,6 @@
-const { BrowserWindow, ipcMain, globalShortcut, screen, clipboard } = require("electron");
+const { BrowserWindow, ipcMain, globalShortcut, screen } = require("electron");
 const os = require("os");
 const path = require("path");
-const ip = require('ip');
-const IPAddress = ip.address();
 
 let captureWins = [];
 
@@ -136,16 +134,6 @@ const { width, height } = screen.getPrimaryDisplay().workAreaSize
         console.log(333333)
         console.log(path)
         console.log(333333)
-        const spawn = require('child_process');
-        clipboard.writeText(`http://${IPAddress}:8090/screenShot.png`, 'selection')
-        spawn.exec('node -v', (err, stdout, stderr) => {
-//            if (err) {
-//                console.log(`err: ${err}`);
-//            }
-//            console.log(`stdout: ${stdout}`);
-//            clipboard.writeText(stdout, 'selection')
-        });
-
     }
   });
 };
