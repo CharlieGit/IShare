@@ -88,16 +88,16 @@ public class FileController {
         FileInfo fileInfo = fileService.getFileInfoById(fileId);
         if (fileInfo == null || fileInfo.getExpireDate().before(new Date())) {
             logger.info("the file not found or expired");
-            throw new FileException("", "error.html");
+            throw new FileException("file not found or expired", "error.html");
         }
 
         if (!StringUtils.isEmpty(fileInfo.getEncryptCode()) && StringUtils.isEmpty(code)) {
             session.setAttribute("fileId",fileInfo.getFileId());
-            throw new FileException("", "index.html");
+            throw new FileException("coed is empty", "index.html");
         }
 
         if (!StringUtils.isEmpty(fileInfo.getEncryptCode()) && !fileInfo.getEncryptCode().equalsIgnoreCase(code)) {
-            throw new FileException("", "error.html");
+            throw new FileException("wrong code", "error.html");
         }
 
         // Load file as Resource

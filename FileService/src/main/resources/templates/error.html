@@ -1,7 +1,6 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-
     <link href='//fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
     <style>
         body {
@@ -14,18 +13,15 @@
             font-weight: 100;
             font-family: DialogInput;
         }
-
         .container {
             text-align: center;
             display: table-cell;
             vertical-align: middle;
         }
-
         .content {
             text-align: center;
             display: inline-block;
         }
-
         .title {
             font-size: 50px;
             margin-bottom: 40px;
@@ -36,7 +32,8 @@
 <div class="container">
     <div class="content">
         <div class="title">
-            <p>Sorry, something goes wrong</p>
+            <img  th:src = "@{~/error.jpg}"><br/>
+            <span th:text = "${message}">Sorry, something goes wrong</span>
         </div>
     </div>
 </div>
