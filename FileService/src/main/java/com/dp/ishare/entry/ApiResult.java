@@ -34,7 +34,7 @@ public class ApiResult<T> {
         return "ApiResult{" +
                 "respCode=" + respCode +
                 ", respMsg='" + respMsg + '\'' +
-                ", data=" + data.toString() +
+                ", data=" + data +
                 '}';
     }
 }

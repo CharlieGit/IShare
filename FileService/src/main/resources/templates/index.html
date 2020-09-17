@@ -2,17 +2,27 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache">
     <title>input code</title>
 </head>
 <body>
-    <form action="/downloadFile" method="post" id="form">
+    <form action="" method="post" id="form">
         <input type="hidden" th:value="code" name="code" id="code">
-        <input type="hidden" th:value="${session.fileId}" name="file" id="file">
+        <input type="hidden" th:value="${session.fileId}" name="fileId" id="fileId">
     </form>
 </body>
 <script type="text/javascript">
-    var code=prompt("please input the code");
+    var code = "";
+    while (code === "") {
+        code=prompt("please input the code");
+        console.log(code);
+        if (code === "") {
+            alert("please input the extract code");
+        }
+    }
     document.getElementById("code").value = code;
+    document.getElementById("form").action = "/downloadFile/" + document.getElementById("fileId").value;
     document.getElementById("form").submit();
 </script>
 </html>
