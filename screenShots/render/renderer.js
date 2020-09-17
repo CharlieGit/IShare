@@ -107,7 +107,7 @@ getScreenSources().then((stream) => {
 
     const path = require("path");
 
-    const fileSavedPath = path.join(__dirname, "saveFile.png")
+    const fileSavedPath = path.join(__dirname, "screenShot.png")
 
     fs.writeFile(
        fileSavedPath,

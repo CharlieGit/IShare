@@ -40,7 +40,7 @@ var ctx = canvas.getContext('2d');
     })
 
     document.getElementById('share-button').addEventListener('click', () => {
-        const fileSavedPath = path.join(__dirname, "saveFile.png")
+        const fileSavedPath = path.join(__dirname, "screenShot.png")
         var dataURL = canvas.toDataURL();
         fs.writeFile(fileSavedPath, new Buffer.from(dataURL.replace("data:image/png;base64,", ""), "base64"),
            () => {
