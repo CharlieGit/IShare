@@ -1,6 +1,9 @@
-const { BrowserWindow, ipcMain, globalShortcut, screen } = require("electron");
+const { BrowserWindow, ipcMain, globalShortcut, screen, clipboard } = require("electron");
 const os = require("os");
 const path = require("path");
+const ip = require('ip');
+const IPAddress = ip.address();
+const config = require('../../constants');
 
 let captureWins = [];
 
@@ -136,6 +139,7 @@ const { width, height } = screen.getPrimaryDisplay().workAreaSize
         console.log(333333)
         console.log(path)
         console.log(333333)
+        clipboard.writeText(`http://${IPAddress}:${config.port}/ishare/screenShot.png`, 'selection')
     }
   });
 };

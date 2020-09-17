@@ -1,9 +1,6 @@
-const { app, BrowserWindow, clipboard } = require("electron");
+const { app, BrowserWindow } = require("electron");
 const { initScreenshots } = require("./screenShots/main/main");
 const spawn = require('child_process');
-const ip = require('ip');
-const IPAddress = ip.address();
-const config = require('./constants');
 let win;
 
 function createWindow() {
@@ -35,7 +32,6 @@ function createWindow() {
     win = null;
   });
 
-  clipboard.writeText(`http://${IPAddress}:${config.port}/ishare/screenShot.png`, 'selection')
   spawn.exec('node ./server.js', (err, stdout, stderr) => {
       if(err) {
         console.log('spawn error', err);
