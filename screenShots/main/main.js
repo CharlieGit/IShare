@@ -114,8 +114,8 @@ const initScreenshots = () => {
     } else if (type === 'showImage') {
 const { width, height } = screen.getPrimaryDisplay().workAreaSize
         const win = new BrowserWindow({
-            width: width - 400,
-            height: height - 200,
+            width: width - 300,
+            height: height - 150,
             webPreferences: {
               nodeIntegration: true,
             },
