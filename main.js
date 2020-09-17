@@ -17,13 +17,17 @@ function createWindow() {
     frame: false,
     resizable: false,
     transparent: true,
-//    maximizable: false,
+    maximizable: false,
+    skipTaskbar: true,
+    alwaysOnTop: true,
     webPreferences: {
       nodeIntegration: true,
     },
   });
 
   win.loadFile("index.html");
+
+  win.setSkipTaskbar(true);
 
 //  win.webContents.openDevTools();
 
