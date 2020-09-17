@@ -134,7 +134,16 @@ const { width, height } = screen.getPrimaryDisplay().workAreaSize
         console.log(333333)
         console.log(path)
         console.log(333333)
-        clipboard.writeText(path, 'selection')
+        const spawn = require('child_process');
+
+        spawn.exec('node -v', (err, stdout, stderr) => {
+//            if (err) {
+//                console.log(`err: ${err}`);
+//            }
+//            console.log(`stdout: ${stdout}`);
+//            clipboard.writeText(stdout, 'selection')
+        });
+
     }
   });
 };
