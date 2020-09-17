@@ -113,9 +113,13 @@ public class FileController {
         }
 
         String downloadName = FileUtil.getFileName(fileInfo.getFileName(), fileInfo.getFileType());
+        String dispositionHeader = "inline; filename=\"" + URLEncoder.encode(downloadName, "UTF-8") + "\"";
+        if (fileInfo.getFileType().matches("^(html)")) {
+            dispositionHeader = "attachment; filename=\"" + URLEncoder.encode(downloadName, "UTF-8") + "\"";
+        }
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + URLEncoder.encode(downloadName, "UTF-8") + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, dispositionHeader)
                 .body(resource);
     }
 
